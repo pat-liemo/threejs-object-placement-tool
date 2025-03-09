@@ -8,6 +8,18 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Orbit Controls for camera movement
+const orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+orbitControls.enableDamping = true;
+
+// Initialize Transform Controls for object manipulation
+const transformControls = new THREE.TransformControls(camera, renderer.domElement);
+transformControls.addEventListener("change", () => renderer.render(scene, camera));
+transformControls.addEventListener("dragging-changed", function (event) {
+  orbitControls.enabled = !event.value;
+});
+scene.add(transformControls);
+
 // Add Lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambientLight);
@@ -48,6 +60,7 @@ fileInput.addEventListener("change", (event) => {
                 model.position.set(0, 0, 0);
                 scene.add(model);
                 selectedObject = model;
+                transformControls.attach(model);
             });
         };
     }
